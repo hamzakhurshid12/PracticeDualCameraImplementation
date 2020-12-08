@@ -48,9 +48,11 @@ class MainActivity : FlutterActivity() {
         linearlayout = LinearLayout(context)
         linearlayout.layoutParams = LinearLayout.LayoutParams(MATCH_PARENT,MATCH_PARENT)
         linearlayout.orientation = LinearLayout.VERTICAL
-        linearlayout.addView(surfaceview);
-        linearlayout.addView(surfaceview2);
+        //linearlayout.
+        linearlayout.addView(surfaceview, MATCH_PARENT,950);
+        linearlayout.addView(surfaceview2, MATCH_PARENT, 950);
         surfaceview.holder.addCallback(surfaceReadyCallback)
+        surfaceview2.holder.addCallback(surfaceReadyCallback2)
         registry.registerViewFactory("platform_text_view", DualCameraViewfactory())
     }
 
@@ -104,7 +106,7 @@ class MainActivity : FlutterActivity() {
             // no cameras
             return
         }
-        val firstCamera = cameraManager.cameraIdList[cameraID]
+        val firstCamera = cameraManager.cameraIdList[0]
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             val toast = Toast(this)
             //toast.setText("No Permission Granted!")
@@ -193,8 +195,84 @@ class MainActivity : FlutterActivity() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
+    private fun startCameraSession2() {
+        val cameraManager = getSystemService(Context.CAMERA_SERVICE) as CameraManager
+        if (cameraManager.cameraIdList.isEmpty()) {
+            // no cameras
+            return
+        }
+        val firstCamera = cameraManager.cameraIdList[1]
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            val toast = Toast(this)
+            toast.setText("No Permission Granted!")
+            toast.show()
+            return
+        }
+        cameraManager.openCamera(firstCamera, @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
+        object: CameraDevice.StateCallback() {
+            override fun onDisconnected(p0: CameraDevice) { }
+            override fun onError(p0: CameraDevice, p1: Int) { }
 
+            override fun onOpened(cameraDevice: CameraDevice) {
+                // use the camera
+                val cameraCharacteristics =    cameraManager.getCameraCharacteristics(cameraDevice.id)
 
+                cameraCharacteristics[CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP]?.let { streamConfigurationMap ->
+                    streamConfigurationMap.getOutputSizes(ImageFormat.YUV_420_888)?.let { yuvSizes ->
+                        val previewSize = yuvSizes.last()
+                        // cont.
+                        val displayRotation = windowManager.defaultDisplay.rotation
+                        val swappedDimensions = areDimensionsSwapped(displayRotation, cameraCharacteristics)
+                        // swap width and height if needed
+                        val rotatedPreviewWidth = if (swappedDimensions) previewSize.height else previewSize.width
+                        val rotatedPreviewHeight = if (swappedDimensions) previewSize.width else previewSize.height
+
+                        surfaceview2.holder.setFixedSize(rotatedPreviewWidth, rotatedPreviewHeight)
+
+                        val previewSurface = surfaceview2.holder.surface
+
+                        val captureCallback = object : CameraCaptureSession.StateCallback()
+                        {
+                            override fun onConfigureFailed(session: CameraCaptureSession) {}
+
+                            override fun onConfigured(session: CameraCaptureSession) {
+                                // session configured
+                                val previewRequestBuilder =   cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW)
+                                        .apply {
+                                            addTarget(previewSurface)
+                                        }
+                                session.setRepeatingRequest(
+                                        previewRequestBuilder.build(),
+                                        object: CameraCaptureSession.CaptureCallback() {
+                                        },
+                                        Handler { true }
+                                )
+                            }
+                        }
+                        cameraDevice.createCaptureSession(mutableListOf(previewSurface), captureCallback, Handler { true })
+                    }
+
+                }
+            }
+        }, Handler { true })
+    }
+
+    val surfaceReadyCallback2 = object: SurfaceHolder.Callback {
+        override fun surfaceChanged(
+                p0: SurfaceHolder,
+                p1: Int,
+                p2: Int,
+                p3: Int
+        ) { }
+        override fun surfaceDestroyed(p0: SurfaceHolder) { }
+
+        @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
+        override fun surfaceCreated(p0: SurfaceHolder) {
+            startCameraSession2()
+        }
+    }
+    
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     private fun areDimensionsSwapped(displayRotation: Int, cameraCharacteristics: CameraCharacteristics): Boolean {

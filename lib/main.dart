@@ -25,14 +25,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  Widget getPlatformTextView() {
-    if (defaultTargetPlatform == TargetPlatform.android) {
-      return AndroidView(
-          viewType: "platform_text_view",
-          creationParams: <String, dynamic>{"camera": 1},
-          creationParamsCodec: const StandardMessageCodec());
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +36,7 @@ class _MyHomePageState extends State<MyHomePage> {
         children: [
           SizedBox(
             width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height/2,
+            height: MediaQuery.of(context).size.height-80,
             child: AndroidView(
               viewType: "platform_text_view",
               creationParams: <String, dynamic>{"camera": 1},
