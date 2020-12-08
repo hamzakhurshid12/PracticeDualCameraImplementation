@@ -4,15 +4,14 @@ import android.content.Context
 import android.graphics.PixelFormat
 import android.view.SurfaceView
 import android.view.View
+import android.widget.LinearLayout
 import android.widget.TextView
 import io.flutter.plugin.platform.PlatformView
 
 class DualCameraView(context: Context) : PlatformView {
-    val surfaceview: SurfaceView = SurfaceView(context);
+    //val linearLayout: LinearLayout = LinearLayout(context);
     override fun getView(): View {
-        //surfaceview.holder.setFixedSize(200,200);
-        //surfaceview.holder.setFormat(PixelFormat.TRANSLUCENT)
-        return MainActivity.surfaceView
+        return MainActivity.linearlayout;
     }
     override fun dispose() {}
 }

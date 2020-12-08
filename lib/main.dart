@@ -47,7 +47,7 @@ class _MyHomePageState extends State<MyHomePage> {
             height: MediaQuery.of(context).size.height/2,
             child: AndroidView(
               viewType: "platform_text_view",
-              creationParams: <String, dynamic>{"camera": 0},
+              creationParams: <String, dynamic>{"camera": 1},
               creationParamsCodec: const StandardMessageCodec(),
             ),
           ),

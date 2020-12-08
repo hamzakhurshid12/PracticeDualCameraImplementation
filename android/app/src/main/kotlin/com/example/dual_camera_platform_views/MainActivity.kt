@@ -15,10 +15,13 @@ import android.net.Uri
 import android.os.Build
 import android.os.Handler
 import android.provider.Settings
+import android.util.AttributeSet
 import android.util.Log
 import android.view.Surface
 import android.view.SurfaceHolder
 import android.view.SurfaceView
+import android.view.ViewGroup.LayoutParams.MATCH_PARENT
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.annotation.NonNull
 import androidx.annotation.RequiresApi
@@ -30,15 +33,24 @@ import io.flutter.plugins.GeneratedPluginRegistrant
 
 class MainActivity : FlutterActivity() {
     companion object {
-        lateinit var surfaceView : SurfaceView
+        lateinit var surfaceview : SurfaceView
+        lateinit var surfaceview2 : SurfaceView
+        lateinit var linearlayout: LinearLayout
         var cameraID : Int = 0
     }
 
+    @RequiresApi(Build.VERSION_CODES.KITKAT)
     override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
         GeneratedPluginRegistrant.registerWith(flutterEngine)
         val registry = flutterEngine.platformViewsController.registry
-        surfaceView = SurfaceView(context)
-        surfaceView.holder.addCallback(surfaceReadyCallback)
+        surfaceview = SurfaceView(context)
+        surfaceview2 = SurfaceView(context)
+        linearlayout = LinearLayout(context)
+        linearlayout.layoutParams = LinearLayout.LayoutParams(MATCH_PARENT,MATCH_PARENT)
+        linearlayout.orientation = LinearLayout.VERTICAL
+        linearlayout.addView(surfaceview);
+        linearlayout.addView(surfaceview2);
+        surfaceview.holder.addCallback(surfaceReadyCallback)
         registry.registerViewFactory("platform_text_view", DualCameraViewfactory())
     }
 
@@ -83,10 +95,6 @@ class MainActivity : FlutterActivity() {
             intent.data = Uri.fromParts("package", activity.packageName, null)
             activity.startActivity(intent)
         }
-    }
-
-    private fun captureCameraImage() {
-
     }
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
@@ -181,9 +189,11 @@ class MainActivity : FlutterActivity() {
 
         @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
         override fun surfaceCreated(p0: SurfaceHolder) {
-            startCameraSession(surfaceView)
+            startCameraSession(surfaceview)
         }
     }
+
+
 
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
