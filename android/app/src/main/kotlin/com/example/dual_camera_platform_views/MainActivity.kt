@@ -49,8 +49,8 @@ class MainActivity : FlutterActivity() {
         linearlayout.layoutParams = LinearLayout.LayoutParams(MATCH_PARENT,MATCH_PARENT)
         linearlayout.orientation = LinearLayout.VERTICAL
         //linearlayout.
-        linearlayout.addView(surfaceview, MATCH_PARENT,950);
-        linearlayout.addView(surfaceview2, MATCH_PARENT, 950);
+        linearlayout.addView(surfaceview, MATCH_PARENT,940);
+        linearlayout.addView(surfaceview2, MATCH_PARENT, 940);
         surfaceview.holder.addCallback(surfaceReadyCallback)
         surfaceview2.holder.addCallback(surfaceReadyCallback2)
         registry.registerViewFactory("platform_text_view", DualCameraViewfactory())

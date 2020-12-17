@@ -34,9 +34,7 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body:Column(
         children: [
-          SizedBox(
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height-80,
+        Expanded(
             child: AndroidView(
               viewType: "platform_text_view",
               creationParams: <String, dynamic>{"camera": 1},
