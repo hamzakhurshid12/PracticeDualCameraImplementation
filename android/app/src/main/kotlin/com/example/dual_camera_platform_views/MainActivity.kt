@@ -20,7 +20,9 @@ import android.util.Log
 import android.view.Surface
 import android.view.SurfaceHolder
 import android.view.SurfaceView
+import android.view.View
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
+import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.annotation.NonNull
@@ -48,11 +50,11 @@ class MainActivity : FlutterActivity() {
         linearlayout = LinearLayout(context)
         linearlayout.layoutParams = LinearLayout.LayoutParams(MATCH_PARENT,MATCH_PARENT)
         linearlayout.orientation = LinearLayout.VERTICAL
-        //linearlayout.
-        linearlayout.addView(surfaceview, MATCH_PARENT,940);
-        linearlayout.addView(surfaceview2, MATCH_PARENT, 940);
+
         surfaceview.holder.addCallback(surfaceReadyCallback)
         surfaceview2.holder.addCallback(surfaceReadyCallback2)
+        linearlayout.addView(surfaceview)
+        linearlayout.addView(surfaceview2)
         registry.registerViewFactory("platform_text_view", DualCameraViewfactory())
     }
 
@@ -131,7 +133,7 @@ class MainActivity : FlutterActivity() {
                         val rotatedPreviewWidth = if (swappedDimensions) previewSize.height else previewSize.width
                         val rotatedPreviewHeight = if (swappedDimensions) previewSize.width else previewSize.height
 
-                        surfaceView.holder.setFixedSize(rotatedPreviewWidth, rotatedPreviewHeight)
+                        surfaceView.holder.setFixedSize(surfaceView.width, surfaceView.height/2) //Take up half of available space
 
                         // Configure Image Reader
                         val imageReader = ImageReader.newInstance(rotatedPreviewWidth, rotatedPreviewHeight,
@@ -228,7 +230,7 @@ class MainActivity : FlutterActivity() {
                         val rotatedPreviewWidth = if (swappedDimensions) previewSize.height else previewSize.width
                         val rotatedPreviewHeight = if (swappedDimensions) previewSize.width else previewSize.height
 
-                        surfaceview2.holder.setFixedSize(rotatedPreviewWidth, rotatedPreviewHeight)
+                        //surfaceview2.holder.setFixedSize(rotatedPreviewWidth, surfaceview2.height)
 
                         val previewSurface = surfaceview2.holder.surface
 
